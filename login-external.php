@@ -9,7 +9,7 @@ class AdminerLoginExternal {
 	 *
 	 * @param array|object $externals An enumeration containing the fields normally completed on the login form:
 	 *                                server
-	 *                                database (optional, but recommended. user can still access any db that the credentials allow)
+	 *                                database (optional, but recommended. user can always access any db the credentials allow)
 	 *                                username
 	 *                                password
 	 *                                driver (defaults to 'server' for MySQL, but must be specified otherwise,
@@ -32,6 +32,7 @@ class AdminerLoginExternal {
 		}
 		if (isset($_POST['auth'])) {
 			$_POST['auth']['driver'] = $externals->driver;
+			$_POST['auth']['server'] = $_POST['auth']['username'] = $_POST['auth']['password'] = '';
 		}
 		$this->externals = $externals;
 	}
@@ -98,19 +99,17 @@ class AdminerLoginExternal {
 EOHTML;
 	}
 
-	function login($login, $password) {
-		return (bool) $this->externals->authenticated;
-	}
-
 	function loginFormField($name, $heading) {
 		# only for user's benefit, submitted values are overridden by config
+		$readonly = ' readonly';
 		switch ($name) {
 			case 'db':
-				$value = $this->database();
+				$value = isset($_GET['username']) ? (isset($_GET['db']) ? $_GET['db'] : '') : $this->database();
+				$readonly = '';
 				break;
 			case 'driver':
-				# can't do this because name of $drivers global gets mangled by compilation
-				#$value = $GLOBALS['drivers'][$this->externals->driver];
+				# https://github.com/vrana/adminer/pull/438
+				#$value = get_driver($this->externals->driver);
 				#break;
 			case 'server':
 			case 'username':
@@ -126,8 +125,12 @@ EOHTML;
 		}
 		$value = h($value);
 		return <<<EOHTML
-$heading<input type="text" name="auth[$name]" value="$value" readonly>
+$heading<input type="text" name="auth[$name]" value="$value"$readonly>
 
 EOHTML;
+	}
+
+	function login($login, $password) {
+		return (bool) $this->externals->authenticated;
 	}
 }
