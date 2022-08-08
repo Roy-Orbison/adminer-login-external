@@ -101,33 +101,33 @@ EOHTML;
 
 	function loginFormField($name, $heading) {
 		# only for user's benefit, submitted values are overridden by config
-		$readonly = ' readonly';
+		$value = '';
 		switch ($name) {
 			case 'db':
-				$value = isset($_GET['username']) ? (isset($_GET['db']) ? $_GET['db'] : '') : $this->database();
-				$readonly = '';
-				break;
+				$value = h(isset($_GET['username']) ? (isset($_GET['db']) ? $_GET['db'] : '') : $this->database());
+				return <<<EOHTML
+$heading<input type="text" name="auth[$name]" value="$value">
+
+EOHTML;
 			case 'driver':
-				# https://github.com/vrana/adminer/pull/438
-				#$value = get_driver($this->externals->driver);
-				#break;
+				if (function_exists('get_driver')) { # https://github.com/vrana/adminer/pull/438
+					$value = h($this->externals->driver);
+					$driver = h(get_driver($this->externals->driver)) ?: 'Unknown';
+					return <<<EOHTML
+$heading<input type="hidden" name="auth[$name]" value="$value">$driver
+
+EOHTML;
+				}
+				$value = ' value="' . h($this->externals->driver) . '"';
+				# don't break
 			case 'server':
 			case 'username':
 			case 'password':
-				$name = h($name);
 				return <<<EOHTML
-<input type="hidden" name="auth[$name]">
+<input type="hidden" name="auth[$name]"$value>
 
 EOHTML;
-				break;
-			default:
-				return;
 		}
-		$value = h($value);
-		return <<<EOHTML
-$heading<input type="text" name="auth[$name]" value="$value"$readonly>
-
-EOHTML;
 	}
 
 	function login($login, $password) {
