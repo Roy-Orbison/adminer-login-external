@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Enables use of saved credentials for accessing a database, without divulging
+ * them. Provides a mechanism to authenticate each request against any login
+ * system external to Adminer, or to bypass authentication (for local
+ * development on a private machine).
+ *
+ * @author Roy Orbitson, https://github.com/Roy-Orbison
+ * @license https://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
+ */
+
 class AdminerLoginExternal {
 
 	protected $externals;
@@ -14,14 +25,16 @@ class AdminerLoginExternal {
 	 *                                password
 	 *                                driver (defaults to 'server' for MySQL, but must be specified otherwise,
 	 *                                        e.g. 'pgsql', 'sqlite')
+	 *
 	 *                                Plus fields to control the behaviour of this plugin:
-	 *                                authenticated (required boolean, whether the user is known, *currently* authenticated,
-	 *                                               and has privileges equivalent to the specified username)
-	 *                                app_name (dynamically change the name of the tool from 'Adminer')
-	 *                                manual_login (optional boolean to control auto-submission of Adminer's login form,
-	 *                                              and prevents logging out whilst authenticated)
-	 *                                expired_html (optional HTML message to show when user's authentication expires whilst
-	 *                                              logged in to Adminer)
+	 *                                authenticated (required boolean, ideally checked on *every* request, true if the
+	 *                                               user is known, currently authenticated, and has db privileges
+	 *                                               equivalent to the specified username)
+	 *                                app_name (dynamically change the name of the tool from Adminer/AdminerEvo)
+	 *                                manual_login (optional boolean to control auto-submission of Adminer's own login
+	 *                                              form, and prevents logging out whilst authenticated)
+	 *                                expired_html (optional HTML message to show when user's external authentication
+	 *                                              expires whilst logged in to Adminer)
 	 *                                failure_html (optional HTML message to show user they are not authenticated, e.g. a
 	 *                                              paragraph containing a link to the login page)
 	 */
