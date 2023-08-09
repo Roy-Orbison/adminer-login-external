@@ -55,7 +55,7 @@ class AdminerLoginExternal {
 	}
 
 	function credentials() {
-		if (!$this->externals->authenticated) {
+		if (empty($this->externals->authenticated)) {
 			# always check external stat rather than relying on adminer's session login
 			auth_error(
 				empty($this->externals->expired_html) ?
@@ -76,7 +76,7 @@ class AdminerLoginExternal {
 	}
 
 	function loginForm() {
-		if (!$this->externals->authenticated) {
+		if (empty($this->externals->authenticated)) {
 			if (empty($this->externals->failure_html)) {
 				echo '<p>You must first log in to the system that grants access to this tool.</p>';
 			}
@@ -133,6 +133,6 @@ EOHTML;
 	}
 
 	function login($login, $password) {
-		return (bool) $this->externals->authenticated;
+		return !empty($this->externals->authenticated);
 	}
 }
