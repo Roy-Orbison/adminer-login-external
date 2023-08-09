@@ -86,30 +86,19 @@ class AdminerLoginExternal {
 			return false;
 		}
 
-		if (!empty($this->externals->manual_login)) {
-			return;
+		if (empty($this->externals->manual_login)) {
+			echo script(
+				<<<EOJS
+document.addEventListener(
+	'DOMContentLoaded',
+	function() {
+		document.forms[0].submit();
+	},
+	true
+);
+EOJS
+			);
 		}
-
-		$nonce_attr = null;
-		$response_headers = headers_list();
-		while ($response_headers) {
-			$response_header = array_pop($response_headers);
-			if (preg_match('/^Content-Security-Policy:.*?\'nonce-([^\']+)/i', $response_header, $nonce_matches)) {
-				$nonce_attr = " nonce='{$nonce_matches[1]}'";
-				break;
-			}
-		}
-		echo <<<EOHTML
-<script$nonce_attr>
-	document.addEventListener(
-		'DOMContentLoaded',
-		function() {
-			document.forms[0].submit();
-		},
-		true
-	);
-</script>
-EOHTML;
 	}
 
 	function loginFormField($name, $heading) {
