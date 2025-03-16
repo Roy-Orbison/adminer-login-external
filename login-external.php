@@ -57,7 +57,7 @@ class AdminerLoginExternal {
 	function credentials() {
 		if (empty($this->externals->authenticated)) {
 			# always check external stat rather than relying on adminer's session login
-			auth_error(
+			Adminer\auth_error(
 				empty($this->externals->expired_html) ?
 					'External authentication expired.' :
 					$this->externals->expired_html
@@ -87,7 +87,7 @@ class AdminerLoginExternal {
 		}
 
 		if (empty($this->externals->manual_login)) {
-			echo script(
+			echo Adminer\script(
 				<<<EOJS
 document.addEventListener(
 	'DOMContentLoaded',
@@ -106,21 +106,21 @@ EOJS
 		$value = '';
 		switch ($name) {
 			case 'db':
-				$value = h(isset($_GET['username']) ? (isset($_GET['db']) ? $_GET['db'] : '') : $this->database());
+				$value = Adminer\h(isset($_GET['username']) ? (isset($_GET['db']) ? $_GET['db'] : '') : $this->database());
 				return <<<EOHTML
 $heading<input type="text" name="auth[$name]" value="$value">
 
 EOHTML;
 			case 'driver':
 				if (function_exists('get_driver')) { # https://github.com/vrana/adminer/pull/438
-					$value = h($this->externals->driver);
-					$driver = h(get_driver($this->externals->driver)) ?: 'Unknown';
+					$value = Adminer\h($this->externals->driver);
+					$driver = Adminer\h(Adminer\get_driver($this->externals->driver)) ?: 'Unknown';
 					return <<<EOHTML
 $heading<input type="hidden" name="auth[$name]" value="$value">$driver
 
 EOHTML;
 				}
-				$value = ' value="' . h($this->externals->driver) . '"';
+				$value = ' value="' . Adminer\h($this->externals->driver) . '"';
 				# don't break
 			case 'server':
 			case 'username':
