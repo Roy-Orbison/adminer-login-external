@@ -112,16 +112,12 @@ $heading<input type="text" name="auth[$name]" value="$value">
 
 EOHTML;
 			case 'driver':
-				if (function_exists('get_driver')) { # https://github.com/vrana/adminer/pull/438
-					$value = Adminer\h($this->externals->driver);
-					$driver = Adminer\h(Adminer\get_driver($this->externals->driver)) ?: 'Unknown';
-					return <<<EOHTML
+				$value = Adminer\h($this->externals->driver);
+				$driver = Adminer\h(Adminer\get_driver($this->externals->driver)) ?: 'Unknown';
+				return <<<EOHTML
 $heading<input type="hidden" name="auth[$name]" value="$value">$driver
 
 EOHTML;
-				}
-				$value = ' value="' . Adminer\h($this->externals->driver) . '"';
-				# don't break
 			case 'server':
 			case 'username':
 			case 'password':
